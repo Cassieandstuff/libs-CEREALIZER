@@ -1,0 +1,4 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/sct-serialTargets.cmake")
+check_required_components(sct-serial)
