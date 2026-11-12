@@ -29,6 +29,13 @@ namespace
         if (! ok) ++failures;
     }
 
+    /// Text that must come out exactly: a failure shows both.
+    void checkText (const char* label, const std::string& got, const std::string& want)
+    {
+        check (label, got == want);
+        if (got != want) std::cout << "--- got ---\n" << got << "--- want ---\n" << want << "-----------\n";
+    }
+
     enum class Mode { major, minor };
 
     struct Vec
@@ -148,10 +155,15 @@ int main()
     {
         Vec         v { 1, 0.5f, -2 };
         std::string out = yaml::save (v);
-        check ("an object is a block mapping in reflect() order", out == "x: 1\ny: 0.5\nz: -2\n");
+        checkText ("an object is a block mapping in reflect() order", out, "x: 1\ny: 0.5\nz: -2\n");
 
         Role r { "Hero", "player", {} };
-        check ("a nested object indents by two", yaml::save (r) == "name: Hero\nactor: player\noffset:\n  x: 0\n  y: 0\n  z: 0\n");
+        checkText ("a nested object indents by two", yaml::save (r), "name: Hero\nactor: player\noffset:\n  x: 0\n  y: 0\n  z: 0\n");
+
+        // y and n stay plain (the readers in use read them as text); the YAML 1.1 words for booleans are quoted.
+        Role yn { "y", "yes", {} };
+        checkText ("y stays plain, yes is quoted", yaml::save (yn), "name: y\nactor: \"yes\"\noffset:\n  x: 0\n  y: 0\n  z: 0\n");
+        check ("y and yes read back as text", roundTrips (yn));
     }
     check ("a string map is a mapping with quoted numeric keys", text.find ("roles:\n  \"0001\":\n    name: Hero\n") != std::string::npos);
     check ("a key with spaces stays plain", text.find ("\n  two words:\n") != std::string::npos);
@@ -177,8 +189,8 @@ int main()
         const std::string out = yaml::save (v);
         Vec               back {};
         const bool        ok = yaml::load (out, back).has_value();
-        check ("inf and nan are .inf / -.inf / .nan", out == "x: .inf\ny: -.inf\nz: .nan\n" && ok && std::isinf (back.x) && back.y < 0 &&
-                                                         std::isnan (back.z));
+        checkText ("inf and nan write as .inf / -.inf / .nan", out, "x: .inf\ny: -.inf\nz: .nan\n");
+        check ("inf and nan read back", ok && std::isinf (back.x) && back.y < 0 && std::isnan (back.z));
         Vec neg { -0.0f, 0, 0 };
         check ("negative zero round-trips", roundTrips (neg) && std::signbit (neg.x));
     }

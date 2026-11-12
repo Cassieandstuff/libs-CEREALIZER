@@ -103,10 +103,13 @@ namespace sct::serial::yaml
         // ── scalars ───────────────────────────────────────────────────────────
         inline bool isNullWord (std::string_view s) { return s.empty() || s == "~" || s == "null" || s == "Null" || s == "NULL"; }
 
+        /// The words a YAML 1.1 or 1.2 reader takes for a boolean, quoted so they read back as text. The single letters YAML
+        /// 1.1 also lists (y, n) are left plain: the readers in use (PyYAML, ruamel, rapidyaml, yaml-cpp) read them as text,
+        /// and quoting them would quote every `y:` key of a vector.
         inline bool isBoolWord (std::string_view s)
         {
             for (std::string_view w : { "true", "True", "TRUE", "false", "False", "FALSE", "yes", "Yes", "YES", "no", "No", "NO",
-                                        "on", "On", "ON", "off", "Off", "OFF", "y", "Y", "n", "N" })
+                                        "on", "On", "ON", "off", "Off", "OFF" })
                 if (s == w) return true;
             return false;
         }
