@@ -39,6 +39,13 @@ if(SCT_SERIAL_BUILD_TESTS)
         target_compile_options(sct-serial-tests PRIVATE /W4 /MP)
     endif()
     add_test(NAME sct-serial-tests COMMAND sct-serial-tests)
+
+    add_executable(sct-serial-yaml-tests "${CMAKE_CURRENT_SOURCE_DIR}/tests/YamlTest.cpp")
+    target_link_libraries(sct-serial-yaml-tests PRIVATE sct::serial)
+    if(MSVC)
+        target_compile_options(sct-serial-yaml-tests PRIVATE /W4 /utf-8)
+    endif()
+    add_test(NAME sct-serial-yaml-tests COMMAND sct-serial-yaml-tests)
 endif()
 
 # ── Install + package ────────────────────────────────────────────────────────
