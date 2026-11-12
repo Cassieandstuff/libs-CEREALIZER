@@ -6,7 +6,9 @@ Moved unchanged from the Scene Editor's `libs/sct-serial` (2026-10-26; GitHub: l
 files (`.bkproj`) are written with it.
 
 ## Rules
-- Consumers link `sct::serial` and include `<sct-serial/SctSerial.h>` / `<sct-serial/SctSerialFile.h>` only.
+- Consumers link `sct::serial` and include `<sct-serial/SctSerial.h>` / `<sct-serial/SctSerialFile.h>` / `<sct-serial/SctSerialYaml.h>` only.
+- `SctSerialYaml.h` stays pure std: its reader handles the block YAML people write and refuses the rest with the line.
+  A YAML file must save → load → save byte-identically (`sct-serial-yaml-tests`).
 - A type lists its fields once in `reflect()`; the same list saves and loads. A key missing on load leaves the field
   at its default, so a field added later keeps older files opening: never rename or reuse a key.
 - `roundTrip(x) == x` is the drift gate for every reflectable type a consumer adds.

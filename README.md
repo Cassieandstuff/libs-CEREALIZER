@@ -21,6 +21,7 @@ so older files keep opening when fields are added.
 |---|---|
 | `<sct-serial/SctSerial.h>` | `sct::serial::Writer` / `Reader` / `write` / `read`, the Backend concept, `MemoryTree` (a pure-std in-memory backend), `roundTrip()` (the drift gate: `roundTrip(x) == x` iff every field is in `reflect()` both ways) |
 | `<sct-serial/SctSerialFile.h>` | `sct::serial::file::save` / `load` — the "SCT1" binary format (magic + size cap on read, bounds-checked parsing, atomic temp-file + rename write, bit-exact doubles) — and `dumpText` for diffing |
+| `<sct-serial/SctSerialYaml.h>` | `sct::serial::yaml::save` / `load` / `saveFile` / `loadFile` — YAML text for files people edit: objects as mappings, a `std::map` as a mapping, leaf vectors as scalar sequences, strings quoted only where YAML would misread them, floats in their shortest exact form (a second save is byte-identical). Its own small reader (no YAML library) takes block YAML, flow collections and comments, and refuses anchors, tags and block scalars, naming the line |
 
 Supported field shapes: arithmetic, `bool`, enums, `std::string`, nested
 reflectables, `std::vector<T>` and `std::map<K, V>` of any of these (nesting
